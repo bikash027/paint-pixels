@@ -1,0 +1,28 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "kshdffa",
+  "main": "index.js",
+  "scripts": {
+    "client-install": "npm install --prefix client",
+    "start": "node app.js",
+    "server": "nodemon app.js --ignore client",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\" ",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "author": "hkjhkasdf",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "concurrently": "^4.1.2",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "immutable": "^4.0.0-rc.12",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
