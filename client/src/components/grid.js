@@ -9,10 +9,11 @@ class Grid extends React.Component {
 		this.t='';
 		// this.updater='diff';
 		const arr=[];
-		for(let i=0;i<350;i++)
+		for(let i=0;i<1296;i++)
 			arr.push('rgb(255,255,255)');
+		this.colors=arr;
+		this.active=false;
 		this.state={
-			colors:List(arr),
 			updater:'diff'
 		}
 	}
@@ -24,15 +25,18 @@ class Grid extends React.Component {
 		// .then(res=>res.data)
 		.then(res=>{
 			// console.log(res.data);
-			let colors=this.state.colors;
+			let colors=this.colors;
 			const ar=res.data.ar;
+			ar.sort(function(a,b){
+				return a.time-b.time;
+			})
 			for(let i=0;i<ar.length;i++){
-				if(colors.get(ar[i].square)!==ar[i].color)
-					colors=colors.set(ar[i].square,ar[i].color)
+				// if(colors[ar[i].square]!==ar[i].color)
+					// colors=colors.set(ar[i].square,ar[i].color)
+					colors[ar[i].square]=ar[i].color;
 			}
 			// this.updater='diff';
 			this.setState({
-				colors:colors,
 				updater:'diff'
 			});
 		})
@@ -46,8 +50,8 @@ class Grid extends React.Component {
 	shouldComponentUpdate(nextProps,nextState){
 		if(this.props!==nextProps)
 			return true;
-		if(this.state.colors===nextState.colors)
-			return false;
+		// if(this.state.colors===nextState.colors)
+			// return false;
 		if(nextState.updater==='self')
 			return false;
 		return true;
@@ -55,14 +59,43 @@ class Grid extends React.Component {
 	sendColor(){
 		return this.props.color;
 	}
-	paint(e){
-		if(e.target!==e.currentTarget){
-			e.target.style.backgroundColor=this.props.color;
+	// paint(e){
+	// 	if(e.target!==e.currentTarget){
+	// 		const color=this.props.color;
+	// 		e.target.style.backgroundColor=color;
+	// 		let id=e.target.id;
+	// 		id=parseInt(id);
+	// 		this.colors[id]=color;
+	// 		const data={
+	// 			square:id,
+	// 			color:color
+	// 		}
+	// 		axios.post('/api',data)
+	// 		.then(res=>{
+	// 	      console.log(res);
+	// 	    })
+	// 	    .catch((err)=>{
+	// 	      console.log(err);
+	// 	    });
+	// 	    // this.updater='self';
+	// 		this.setState({
+	// 			// colors:this.state.colors.set(id,this.props.color),
+	// 			updater:'self'
+	// 		});
+	// 		e.stopPropagation();
+	// 	}
+	// }
+	dpaint(e){
+		if(e.target!==e.currentTarget && this.active===true){
+			const color=this.props.color;
+			e.target.style.backgroundColor=color;
 			let id=e.target.id;
 			id=parseInt(id);
+			this.colors[id]=color;
 			const data={
 				square:id,
-				color:this.props.color
+				color:color,
+				time:Date.now()
 			}
 			axios.post('/api',data)
 			.then(res=>{
@@ -73,7 +106,7 @@ class Grid extends React.Component {
 		    });
 		    // this.updater='self';
 			this.setState({
-				colors:this.state.colors.set(id,this.props.color),
+				// colors:this.state.colors.set(id,this.props.color),
 				updater:'self'
 			});
 			e.stopPropagation();
@@ -81,12 +114,15 @@ class Grid extends React.Component {
 	}
 	render(){
 		const content=[];
-		const colors=this.state.colors;
-		for(let i=0;i<350;i++){
-			content.push(<GridItem color={colors.get(i)} ID={i+'grid'} key={i}/>)
+		const colors=this.colors;
+		for(let i=0;i<1296;i++){
+			content.push(<GridItem color={colors[i]} ID={i+'grid'} key={i}/>)
 		}
 		return( 
-			<div onClick={this.paint.bind(this)} className="grid">
+			<div onMouseDown={()=>{this.active=true;}}
+				 onMouseUp={()=>{this.active=false;}}
+				 onMouseOver={this.dpaint.bind(this)}
+				 className="grid">
 				{content}
 			</div>
 		);

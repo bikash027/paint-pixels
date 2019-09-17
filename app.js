@@ -19,8 +19,8 @@ let ar=[];
 for(let i=0;i<10;i++){
 	ar.push({
 				square:0,
-				color:'rgb(255,255,255)'
-				// time:Date.now()
+				color:'rgb(255,255,255)',
+				time:Date.now()
 			});
 }
 //route
@@ -31,8 +31,8 @@ app.post('/api',function(req,res){
 	// let date= new Date();
 	ar.push({
 			  square:req.body.square,
-			  color:req.body.color
-			  // time:Date.now()
+			  color:req.body.color,
+			  time:req.body.time
 			}
 		   );
 	ar.shift();

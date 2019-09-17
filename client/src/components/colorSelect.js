@@ -12,6 +12,7 @@ class ColorSelect extends React.PureComponent {
 			S:0,
 			V:50
 		}
+		this.width=(window.innerWidth)*23/100;
 		this.hist=[{
 						H:0,S:0,V:50
 				   },
@@ -27,6 +28,18 @@ class ColorSelect extends React.PureComponent {
 				   {
 						H:0,S:0,V:50
 				   }];
+	}
+	componentDidMount() {
+	  this.updateWindowDimensions();
+	  window.addEventListener('resize', this.updateWindowDimensions);
+	}
+
+	componentWillUnmount() {
+	  window.removeEventListener('resize', this.updateWindowDimensions);
+	}
+
+	updateWindowDimensions() {
+	  this.width=(window.innerWidth)*23/100;
 	}
 	setValue(v){
 		const color=convert(this.state.H,this.state.S,v);
@@ -49,10 +62,15 @@ class ColorSelect extends React.PureComponent {
 		});
 	}
 	findHS(e){
-		const x=e.nativeEvent.offsetX-100.5;
-		const y=100.5-e.nativeEvent.offsetY;
-		const r=Math.sqrt(x*x+y*y);
+		// 100.5
+		// this.width/=4;
+		// const c=(2*this.width/25)+(2*23*this.width/125);
+		const x=e.nativeEvent.offsetX-this.width*2/5;
+		const y=this.width*2/5-e.nativeEvent.offsetY;
+		console.log(this.width,x,y)
+		let r=Math.sqrt(x*x+y*y);
 		let angle=Math.acos(x/r);
+		r=(r/(this.width*2/5))*100;
 		if(y<0)
 			angle=2*(Math.PI)-angle;
 		angle=angle*180/(Math.PI);
